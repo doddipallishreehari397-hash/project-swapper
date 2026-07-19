@@ -7,6 +7,14 @@ import numpy as np
 import streamlit as st
 import insightface
 from insightface.app import FaceAnalysis
+# Add this helper to your load_models() function inside app.py
+import urllib.request
+if not os.path.exists('models/inswapper_128.onnx'):
+    os.makedirs('models', exist_ok=True)
+    urllib.request.urlretrieve(
+        "https://github.com/facefusion/facefusion-assets/releases/download/models/inswapper_128.onnx", 
+        "models/inswapper_128.onnx"
+    )
 
 # --- CONFIGURATION & DIRECTORIES ---
 UPLOAD_DIR = "temp_cache"
