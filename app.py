@@ -41,20 +41,19 @@ st.markdown("""
 # --- MODEL INITIALIZATION (CACHED) ---
 @st.cache_resource
 def load_models():
-    """Initializes Face Analysis and the Inswapper ONNX model."""
-    # Initialize detector (uses CPU/GPU automatically depending on onnxruntime build)
-    app = FaceAnalysis(name='buffalo_l')
+    """Initializes Face Analysis and the Inswapper ONNX model with RAM optimizations."""
+    # Force FaceAnalysis to ONLY load the detection model, skipping gender/age/recognition
+    app = FaceAnalysis(name='buffalo_l', allowed_modules=['detection']) 
     app.prepare(ctx_id=0, det_size=(640, 640))
     
-    # Load the specific 128x128 face swapper model
+    # Load the 128x128 face swapper model
     model_path = 'models/inswapper_128.onnx'
     if not os.path.exists(model_path):
-        st.error(f"Model file not found at {model_path}. Please download inswapper_128.onnx.")
+        st.error(f"Model file not found at {model_path}.")
         st.stop()
         
     swapper = insightface.model_zoo.get_model(model_path, download=False, check_cv2_onerror=False)
     return app, swapper
-
 try:
     face_analyzer, face_swapper = load_models()
 except Exception as e:
